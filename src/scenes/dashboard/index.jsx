@@ -1,280 +1,216 @@
-import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
-import { tokens } from "../../theme";
-import { mockTransactions } from "../../data/mockData";
-import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
-import EmailIcon from "@mui/icons-material/Email";
-import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import TrafficIcon from "@mui/icons-material/Traffic";
-import Header from "../../components/Header";
-import LineChart from "../../components/LineChart";
-import GeographyChart from "../../components/GeographyChart";
-import BarChart from "../../components/BarChart";
-import StatBox from "../../components/StatBox";
-import ProgressCircle from "../../components/ProgressCircle";
+import React, { useState, useEffect } from 'react';
+import { Box, TextField, Button, Typography } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import { fetchDashboardKPIs } from '../../api';
 
 const Dashboard = () => {
-  const theme = useTheme();
-  const colors = tokens(theme.palette.mode);
+  const [data, setData] = useState({});
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeSection, setActiveSection] = useState('');
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const result = await fetchDashboardKPIs();
+        console.log('Fetched data:', result); // Log data for debugging
+        setData(result); // Set the fetched data to state
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
+      }
+    };
+
+    getData();
+  }, []); // Empty dependency array means this effect runs once after the initial render
+
+  // Extract the relevant part of the data
+  const kpis = data?.data?.LDV_EC200U_ || {}; // Adjust based on your data structure
 
   return (
-    <Box m="20px">
-      {/* HEADER */}
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
-
-        <Box>
-          <Button
-            sx={{
-              backgroundColor: colors.blueAccent[700],
-              color: colors.grey[100],
-              fontSize: "14px",
-              fontWeight: "bold",
-              padding: "10px 20px",
-            }}
-          >
-            <DownloadOutlinedIcon sx={{ mr: "10px" }} />
-            Download Reports
-          </Button>
+    <Box m="20px" display="flex" flexDirection="column" height="100vh">
+      {/* SEARCH & DATE PICKERS */}
+      <Box display="flex" justifyContent="space-between" alignItems="center" mt="20px">
+        <Box 
+          display="flex" 
+          alignItems="center" 
+          borderBottom="1px solid #d3d3d3" 
+          px={1} 
+          py={0.5} 
+          sx={{ backgroundColor: 'white' }}
+        >
+          <SearchIcon sx={{ color: "#707070", mr: 1 }} />
+          <TextField 
+            variant="standard" 
+            placeholder="Search Devices" 
+            InputProps={{ disableUnderline: true }} 
+            sx={{ width: '200px', fontSize: '14px', color: '#707070' }}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </Box>
+        <Box display="flex" alignItems="center" gap="10px">
+          <TextField
+            variant="standard"
+            label="Start Date"
+            type="date"
+            InputLabelProps={{ shrink: true }}
+            InputProps={{ endAdornment: <CalendarTodayIcon sx={{ color: "#707070" }} /> }}
+            sx={{ width: '150px', fontSize: '14px' }}
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+          <TextField
+            variant="standard"
+            label="End Date"
+            type="date"
+            InputLabelProps={{ shrink: true }}
+            InputProps={{ endAdornment: <CalendarTodayIcon sx={{ color: "#707070" }} /> }}
+            sx={{ width: '150px', fontSize: '14px' }}
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
         </Box>
       </Box>
 
-      {/* GRID & CHARTS */}
+      {/* GRID & STAT BOXES */}
       <Box
         display="grid"
         gridTemplateColumns="repeat(12, 1fr)"
-        gridAutoRows="140px"
         gap="20px"
+        mt="20px"
+        flexGrow={1}
       >
-        {/* ROW 1 */}
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="12,361"
-            subtitle="Emails Sent"
-            progress="0.75"
-            increase="+14%"
-            icon={
-              <EmailIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
+        {/* STAT BOXES */}
+        <Box gridColumn="span 4" backgroundColor="#00A86B" p="20px" borderRadius="8px" textAlign="center">
+          <Typography variant="h1" color="textPrimary">
+            {kpis.totalDistance ?? 'N/A'}
+          </Typography>
+          <Typography variant="h2" color="textSecondary">
+            Total Distance (Km)
+          </Typography>
         </Box>
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="431,225"
-            subtitle="Sales Obtained"
-            progress="0.50"
-            increase="+21%"
-            icon={
-              <PointOfSaleIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
+        <Box gridColumn="span 4" backgroundColor="#00A86B" p="20px" borderRadius="8px" textAlign="center">
+          <Typography variant="h1" color="textPrimary">
+            {kpis.carbonSaving ?? 'N/A'}
+          </Typography>
+          <Typography variant="h2" color="textSecondary">
+            Carbon Saving (Kg)
+          </Typography>
         </Box>
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="32,441"
-            subtitle="New Clients"
-            progress="0.30"
-            increase="+5%"
-            icon={
-              <PersonAddIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
+        <Box gridColumn="span 4" backgroundColor="#00A86B" p="20px" borderRadius="8px" textAlign="center">
+          <Typography variant="h1" color="textPrimary">
+            {kpis.costSaving ?? 'N/A'}
+          </Typography>
+          <Typography variant="h2" color="textSecondary">
+            Cost Saving (₹)
+          </Typography>
         </Box>
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="1,325,134"
-            subtitle="Traffic Received"
-            progress="0.80"
-            increase="+43%"
-            icon={
-              <TrafficIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
+        <Box gridColumn="span 4" backgroundColor="#00A86B" p="20px" borderRadius="8px" textAlign="center">
+          <Typography variant="h1" color="textPrimary">
+            {kpis.purchaseSavings ?? 'N/A'}
+          </Typography>
+          <Typography variant="h2" color="textSecondary">
+            Purchase Saving (₹)
+          </Typography>
+        </Box>
+        <Box gridColumn="span 4" backgroundColor="#00A86B" p="20px" borderRadius="8px" textAlign="center">
+          <Typography variant="h1" color="textPrimary">
+            {kpis.tbc1 ?? 'N/A'}
+          </Typography>
+          <Typography variant="h2" color="textSecondary">
+            TBC
+          </Typography>
+        </Box>
+        <Box gridColumn="span 4" backgroundColor="#00A86B" p="20px" borderRadius="8px" textAlign="center">
+          <Typography variant="h1" color="textPrimary">
+            {kpis.tbc2 ?? 'N/A'}
+          </Typography>
+          <Typography variant="h2" color="textSecondary">
+            TBC
+          </Typography>
         </Box>
 
-        {/* ROW 2 */}
-        <Box
-          gridColumn="span 8"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-        >
-          <Box
-            mt="25px"
-            p="0 30px"
-            display="flex "
-            justifyContent="space-between"
-            alignItems="center"
+        {/* BUTTONS */}
+        <Box gridColumn="span 4">
+          <Button 
+            fullWidth 
+            sx={{ 
+              backgroundColor: "#00A86B", 
+              color: "#ffffff", 
+              fontSize: "16px",
+              borderRadius: "8px",
+              padding: "10px",
+              textTransform: "none"
+            }}
+            onClick={() => setActiveSection('vehicle')}
           >
-            <Box>
-              <Typography
-                variant="h5"
-                fontWeight="600"
-                color={colors.grey[100]}
-              >
-                Revenue Generated
-              </Typography>
-              <Typography
-                variant="h3"
-                fontWeight="bold"
-                color={colors.greenAccent[500]}
-              >
-                $59,342.32
-              </Typography>
-            </Box>
-            <Box>
-              <IconButton>
-                <DownloadOutlinedIcon
-                  sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
-                />
-              </IconButton>
-            </Box>
-          </Box>
-          <Box height="250px" m="-20px 0 0 0">
-            <LineChart isDashboard={true} />
-          </Box>
+            Vehicle Details
+          </Button>
         </Box>
-        <Box
-          gridColumn="span 4"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          overflow="auto"
-        >
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            borderBottom={`4px solid ${colors.primary[500]}`}
-            colors={colors.grey[100]}
-            p="15px"
+        <Box gridColumn="span 4">
+          <Button 
+            fullWidth 
+            sx={{ 
+              backgroundColor: "#ffffff", 
+              color: "#00A86B", 
+              fontSize: "16px",
+              border: "2px solid #00A86B",
+              borderRadius: "8px",
+              padding: "10px",
+              textTransform: "none"
+            }}
+            onClick={() => setActiveSection('bms')}
           >
-            <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
-              Recent Transactions
-            </Typography>
-          </Box>
-          {mockTransactions.map((transaction, i) => (
-            <Box
-              key={`${transaction.txId}-${i}`}
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              borderBottom={`4px solid ${colors.primary[500]}`}
-              p="15px"
-            >
-              <Box>
-                <Typography
-                  color={colors.greenAccent[500]}
-                  variant="h5"
-                  fontWeight="600"
-                >
-                  {transaction.txId}
-                </Typography>
-                <Typography color={colors.grey[100]}>
-                  {transaction.user}
-                </Typography>
-              </Box>
-              <Box color={colors.grey[100]}>{transaction.date}</Box>
-              <Box
-                backgroundColor={colors.greenAccent[500]}
-                p="5px 10px"
-                borderRadius="4px"
-              >
-                ${transaction.cost}
-              </Box>
-            </Box>
-          ))}
+            BMS Details
+          </Button>
+        </Box>
+        <Box gridColumn="span 4">
+          <Button 
+            fullWidth 
+            sx={{ 
+              backgroundColor: "#ffffff", 
+              color: "#00A86B", 
+              fontSize: "16px",
+              border: "2px solid #00A86B",
+              borderRadius: "8px",
+              padding: "10px",
+              textTransform: "none"
+            }}
+            onClick={() => setActiveSection('vcu')}
+          >
+            VCU Details
+          </Button>
         </Box>
 
-        {/* ROW 3 */}
+        {/* SECTION DISPLAY */}
         <Box
-          gridColumn="span 4"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          p="30px"
+          gridColumn="span 12"
+          mt="20px"
+          p="20px"
+          borderRadius="8px"
+          backgroundColor={
+            activeSection === 'bms' ? '#e0f7fa' : 
+            activeSection === 'vcu' ? '#ffffe0' :
+            'transparent'
+          }
         >
-          <Typography variant="h5" fontWeight="600">
-            Campaign
-          </Typography>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            mt="25px"
-          >
-            <ProgressCircle size="125" />
-            <Typography
-              variant="h5"
-              color={colors.greenAccent[500]}
-              sx={{ mt: "15px" }}
-            >
-              $48,352 revenue generated
+          {activeSection === 'vehicle' && (
+            <Typography variant="h4" color="textPrimary">
+              Vehicle Details Content
             </Typography>
-            <Typography>Includes extra misc expenditures and costs</Typography>
-          </Box>
-        </Box>
-        <Box
-          gridColumn="span 4"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-        >
-          <Typography
-            variant="h5"
-            fontWeight="600"
-            sx={{ padding: "30px 30px 0 30px" }}
-          >
-            Sales Quantity
-          </Typography>
-          <Box height="250px" mt="-20px">
-            <BarChart isDashboard={true} />
-          </Box>
-        </Box>
-        <Box
-          gridColumn="span 4"
-          gridRow="span 2"
-          backgroundColor={colors.primary[400]}
-          padding="30px"
-        >
-          <Typography
-            variant="h5"
-            fontWeight="600"
-            sx={{ marginBottom: "15px" }}
-          >
-            Geography Based Traffic
-          </Typography>
-          <Box height="200px">
-            <GeographyChart isDashboard={true} />
-          </Box>
+          )}
+          {activeSection === 'bms' && (
+            <Typography variant="h4" color="textPrimary">
+              BMS Details Content
+            </Typography>
+          )}
+          {activeSection === 'vcu' && (
+            <Typography variant="h4" color="textPrimary">
+              VCU Details Content
+            </Typography>
+          )}
         </Box>
       </Box>
     </Box>

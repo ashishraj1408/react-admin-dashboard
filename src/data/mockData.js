@@ -432,164 +432,164 @@ export const mockPieData = [
 
 export const mockLineData = [
   {
-    id: "japan",
+    id: "smart battery",
     color: tokens("dark").greenAccent[500],
     data: [
       {
-        x: "plane",
+        x: "jan",
         y: 101,
       },
       {
-        x: "helicopter",
+        x: "feb",
         y: 75,
       },
       {
-        x: "boat",
+        x: "mar",
         y: 36,
       },
       {
-        x: "train",
+        x: "apr",
         y: 216,
       },
       {
-        x: "subway",
+        x: "may",
         y: 35,
       },
       {
-        x: "bus",
+        x: "jun",
         y: 236,
       },
       {
-        x: "car",
+        x: "july",
         y: 88,
       },
       {
-        x: "moto",
+        x: "aug",
         y: 232,
       },
       {
-        x: "bicycle",
+        x: "sep",
         y: 281,
       },
       {
-        x: "horse",
+        x: "oct",
         y: 1,
       },
       {
-        x: "skateboard",
+        x: "nov",
         y: 35,
       },
       {
-        x: "others",
+        x: "dec",
         y: 14,
       },
     ],
   },
   {
-    id: "france",
+    id: "normal battery",
     color: tokens("dark").blueAccent[300],
     data: [
       {
-        x: "plane",
-        y: 212,
+        x: "jan",
+        y: 101,
       },
       {
-        x: "helicopter",
-        y: 190,
+        x: "feb",
+        y: 35,
       },
       {
-        x: "boat",
-        y: 270,
+        x: "mar",
+        y: 336,
       },
       {
-        x: "train",
-        y: 9,
+        x: "apr",
+        y: 116,
       },
       {
-        x: "subway",
-        y: 75,
+        x: "may",
+        y: 35,
       },
       {
-        x: "bus",
-        y: 175,
+        x: "jun",
+        y: 236,
       },
       {
-        x: "car",
-        y: 33,
+        x: "july",
+        y: 88,
       },
       {
-        x: "moto",
-        y: 189,
+        x: "aug",
+        y: 332,
       },
       {
-        x: "bicycle",
-        y: 97,
+        x: "sep",
+        y: 281,
       },
       {
-        x: "horse",
-        y: 87,
+        x: "oct",
+        y: 500,
       },
       {
-        x: "skateboard",
-        y: 299,
+        x: "nov",
+        y: 235,
       },
       {
-        x: "others",
-        y: 251,
+        x: "dec",
+        y: 104,
       },
     ],
   },
   {
-    id: "us",
+    id: "local battery",
     color: tokens("dark").redAccent[200],
     data: [
       {
-        x: "plane",
-        y: 191,
+        x: "jan",
+        y: 101,
       },
       {
-        x: "helicopter",
-        y: 136,
+        x: "feb",
+        y: 75,
       },
       {
-        x: "boat",
-        y: 91,
+        x: "mar",
+        y: 36,
       },
       {
-        x: "train",
-        y: 190,
+        x: "apr",
+        y: 216,
       },
       {
-        x: "subway",
-        y: 211,
+        x: "may",
+        y: 35,
       },
       {
-        x: "bus",
-        y: 152,
+        x: "jun",
+        y: 236,
       },
       {
-        x: "car",
-        y: 189,
+        x: "july",
+        y: 88,
       },
       {
-        x: "moto",
-        y: 152,
+        x: "aug",
+        y: 232,
       },
       {
-        x: "bicycle",
-        y: 8,
+        x: "sep",
+        y: 281,
       },
       {
-        x: "horse",
-        y: 197,
+        x: "oct",
+        y: 1,
       },
       {
-        x: "skateboard",
-        y: 107,
+        x: "nov",
+        y: 35,
       },
       {
-        x: "others",
-        y: 170,
+        x: "dec",
+        y: 14,
       },
     ],
   },
