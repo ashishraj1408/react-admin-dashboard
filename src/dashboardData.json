@@ -1,9 +1,48 @@
 {
-    "totalDistance": 7058.3,
-    "carbonSaving": 2185.3,
-    "costSaving": 3799.1,
-    "tbc1": "NA",
-    "tbc2": "NA",
-    "purchaseSavings": 0
+  "status": 1,
+  "data": {
+      "LDV_EC200U_": {
+          "cellTemperature": 31.018936502176842,
+          "bmsTemeperature": 32.76173155987882,
+          "motorTemperature": null,
+          "controllerTemperature": null,
+          "currentDischarge": 8.635024351699212,
+          "faults": [
+              {
+                  "faultType": "Cell Over Voltage",
+                  "count": 146189,
+                  "type": "BMS"
+              },
+              {
+                  "faultType": "Cell Under Voltage",
+                  "count": 24,
+                  "type": "BMS"
+              }
+          ],
+          "distanceTravelled": 50691.320497602544,
+          "costSavings": 181969.99066731578,
+          "co2Savings": 3290.446029671521,
+          "noxSavings": 50691.320497602544,
+          "coSavings": 50691.320497602544,
+          "epochDay": 1722729600000,
+          "clientMasterId": 31,
+          "cumulativeKPI": 1,
+          "cycles": 40775,
+          "riderScoreParameters": {
+              "brakingScore": 9.998789878987898,
+              "corneringScore": 9.75984598459846,
+              "accelerationScore": 9.995984598459845,
+              "speedingScore": 4,
+              "batteryCurrentDischargeScore": 9.971177117711772,
+              "rideCount": 18180,
+              "riderScore": 8.745159515951595
+          },
+          "ICEDistanceTravelledKM": 0,
+          "EVDistanceTravelledKM": 50691.320497602544,
+          "tripDistance": 34563.232714276,
+          "totalPacketCount": 3876636,
+          "invalidPacketCount": 1504738,
+          "validPacketPercentage": 61.18443929221108
+      }
   }
-  
+}

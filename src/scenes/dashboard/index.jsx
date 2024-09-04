@@ -1,32 +1,58 @@
 import React, { useState, useEffect } from 'react';
-import { Box, TextField, Button, Typography } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import { fetchDashboardKPIs } from '../../api';
+import { Box, TextField, Typography } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
-const Dashboard = () => {
-  const [data, setData] = useState({});
+const Dashboard = ({ data }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeSection, setActiveSection] = useState('');
+  const [filteredData, setFilteredData] = useState({});
 
   useEffect(() => {
-    const getData = async () => {
-      try {
-        const result = await fetchDashboardKPIs();
-        console.log('Fetched data:', result); // Log data for debugging
-        setData(result); // Set the fetched data to state
-      } catch (error) {
-        console.error('Failed to fetch data:', error);
+    if (startDate || endDate) {
+      const filtered = [data?.data?.LDV_EC200U_].filter(item => {
+        const itemDate = new Date(item?.totalDistanceDate); // Assuming filtering is done on totalDistanceDate
+        const start = startDate ? new Date(startDate) : null;
+        const end = endDate ? new Date(endDate) : null;
+
+        if (start && end) {
+          return itemDate >= start && itemDate <= end;
+        } else if (start) {
+          return itemDate >= start;
+        } else if (end) {
+          return itemDate <= end;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        // If no data is found, set all fields to 0 and date to 'N/A'
+        setFilteredData({
+          totalDistance: 0,
+          carbonSaving: 0,
+          costSaving: 0,
+          purchaseSavings: 0,
+          tbc1: 0,
+          tbc2: 0,
+          totalDistanceDate: 'N/A',
+          carbonSavingDate: 'N/A',
+          costSavingDate: 'N/A',
+          purchaseSavingsDate: 'N/A',
+          tbc1Date: 'N/A',
+          tbc2Date: 'N/A',
+        });
+      } else {
+        setFilteredData(filtered[0] || {});
       }
-    };
+    } else {
+      setFilteredData(data?.data?.LDV_EC200U_ || {});
+    }
+  }, [startDate, endDate, data]);
 
-    getData();
-  }, []); // Empty dependency array means this effect runs once after the initial render
+  const kpis = filteredData || {};  // Ensure it is an object
 
-  // Extract the relevant part of the data
-  const kpis = data?.data?.LDV_EC200U_ || {}; // Adjust based on your data structure
+  const formatDate = (date) => date !== 'N/A' ? new Date(date).toLocaleDateString('en-US') : 'N/A';
 
   return (
     <Box m="20px" display="flex" flexDirection="column" height="100vh">
@@ -67,7 +93,7 @@ const Dashboard = () => {
             type="date"
             InputLabelProps={{ shrink: true }}
             InputProps={{ endAdornment: <CalendarTodayIcon sx={{ color: "#707070" }} /> }}
-            sx={{ width: '150px', fontSize: '14px' }}
+            sx={{ width: '150px' }}
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
@@ -85,132 +111,69 @@ const Dashboard = () => {
         {/* STAT BOXES */}
         <Box gridColumn="span 4" backgroundColor="#00A86B" p="20px" borderRadius="8px" textAlign="center">
           <Typography variant="h1" color="textPrimary">
-            {kpis.totalDistance ?? 'N/A'}
+            {kpis.totalDistance ?? 0}
           </Typography>
           <Typography variant="h2" color="textSecondary">
             Total Distance (Km)
           </Typography>
+          <Typography variant="body2" color="textSecondary" sx={{ fontSize: "1.75rem" }}>
+            {formatDate(kpis.totalDistanceDate)}
+          </Typography>
         </Box>
         <Box gridColumn="span 4" backgroundColor="#00A86B" p="20px" borderRadius="8px" textAlign="center">
           <Typography variant="h1" color="textPrimary">
-            {kpis.carbonSaving ?? 'N/A'}
+            {kpis.carbonSaving ?? 0}
           </Typography>
           <Typography variant="h2" color="textSecondary">
             Carbon Saving (Kg)
           </Typography>
+          <Typography variant="body2" color="textSecondary" sx={{ fontSize: "1.75rem" }}>
+            {formatDate(kpis.carbonSavingDate)}
+          </Typography>
         </Box>
         <Box gridColumn="span 4" backgroundColor="#00A86B" p="20px" borderRadius="8px" textAlign="center">
           <Typography variant="h1" color="textPrimary">
-            {kpis.costSaving ?? 'N/A'}
+            {kpis.costSaving ?? 0}
           </Typography>
           <Typography variant="h2" color="textSecondary">
             Cost Saving (₹)
           </Typography>
+          <Typography variant="body2" color="textSecondary" sx={{ fontSize: "1.75rem" }}>
+            {formatDate(kpis.costSavingDate)}
+          </Typography>
         </Box>
         <Box gridColumn="span 4" backgroundColor="#00A86B" p="20px" borderRadius="8px" textAlign="center">
           <Typography variant="h1" color="textPrimary">
-            {kpis.purchaseSavings ?? 'N/A'}
+            {kpis.purchaseSavings ?? 0}
           </Typography>
           <Typography variant="h2" color="textSecondary">
             Purchase Saving (₹)
           </Typography>
-        </Box>
-        <Box gridColumn="span 4" backgroundColor="#00A86B" p="20px" borderRadius="8px" textAlign="center">
-          <Typography variant="h1" color="textPrimary">
-            {kpis.tbc1 ?? 'N/A'}
-          </Typography>
-          <Typography variant="h2" color="textSecondary">
-            TBC
+          <Typography variant="body2" color="textSecondary" sx={{ fontSize: "1.75rem" }}>
+            {formatDate(kpis.purchaseSavingsDate)}
           </Typography>
         </Box>
         <Box gridColumn="span 4" backgroundColor="#00A86B" p="20px" borderRadius="8px" textAlign="center">
           <Typography variant="h1" color="textPrimary">
-            {kpis.tbc2 ?? 'N/A'}
+            {kpis.tbc1 ?? 0}
           </Typography>
           <Typography variant="h2" color="textSecondary">
-            TBC
+            TBC Purchase
+          </Typography>
+          <Typography variant="body2" color="textSecondary" sx={{ fontSize: "1.75rem" }}>
+            {formatDate(kpis.tbc1Date)}
           </Typography>
         </Box>
-
-        {/* BUTTONS */}
-        <Box gridColumn="span 4">
-          <Button 
-            fullWidth 
-            sx={{ 
-              backgroundColor: "#00A86B", 
-              color: "#ffffff", 
-              fontSize: "16px",
-              borderRadius: "8px",
-              padding: "10px",
-              textTransform: "none"
-            }}
-            onClick={() => setActiveSection('vehicle')}
-          >
-            Vehicle Details
-          </Button>
-        </Box>
-        <Box gridColumn="span 4">
-          <Button 
-            fullWidth 
-            sx={{ 
-              backgroundColor: "#ffffff", 
-              color: "#00A86B", 
-              fontSize: "16px",
-              border: "2px solid #00A86B",
-              borderRadius: "8px",
-              padding: "10px",
-              textTransform: "none"
-            }}
-            onClick={() => setActiveSection('bms')}
-          >
-            BMS Details
-          </Button>
-        </Box>
-        <Box gridColumn="span 4">
-          <Button 
-            fullWidth 
-            sx={{ 
-              backgroundColor: "#ffffff", 
-              color: "#00A86B", 
-              fontSize: "16px",
-              border: "2px solid #00A86B",
-              borderRadius: "8px",
-              padding: "10px",
-              textTransform: "none"
-            }}
-            onClick={() => setActiveSection('vcu')}
-          >
-            VCU Details
-          </Button>
-        </Box>
-
-        {/* SECTION DISPLAY */}
-        <Box
-          gridColumn="span 12"
-          mt="20px"
-          p="20px"
-          borderRadius="8px"
-          backgroundColor={
-            activeSection === 'bms' ? '#e0f7fa' : 
-            activeSection === 'vcu' ? '#ffffe0' :
-            'transparent'
-          }
-        >
-          {activeSection === 'vehicle' && (
-            <Typography variant="h4" color="textPrimary">
-              Vehicle Details Content
-            </Typography>
-          )}
-          {activeSection === 'bms' && (
-            <Typography variant="h4" color="textPrimary">
-              BMS Details Content
-            </Typography>
-          )}
-          {activeSection === 'vcu' && (
-            <Typography variant="h4" color="textPrimary">
-              VCU Details Content
-            </Typography>
-          )}
+        <Box gridColumn="span 4" backgroundColor="#00A86B" p="20px" borderRadius="8px" textAlign="center">
+          <Typography variant="h1" color="textPrimary">
+            {kpis.tbc2 ?? 0}
+          </Typography>
+          <Typography variant="h2" color="textSecondary">
+            TBCd
+          </Typography>
+          <Typography variant="body2" color="textSecondary" sx={{ fontSize: "1.75rem" }}>
+            {formatDate(kpis.tbc2Date)}
+          </Typography>
         </Box>
       </Box>
     </Box>
